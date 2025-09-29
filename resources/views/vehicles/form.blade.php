@@ -35,7 +35,7 @@
           </header>
 
           <div>
-            <form method="POST" action="{{ isset($vehicle) ? route('vehicles.update', 1) : route('vehicles.store') }} " enctype="multipart/form-data">
+            <form method="POST" action="{{ isset($vehicle) ? route('vehicles.update', $vehicle->id) : route('vehicles.store') }} " enctype="multipart/form-data">
 
               @csrf
 
@@ -94,7 +94,6 @@
               </div>
 
               <div class="row mb-4">
-
                 <div class="col">
                   <div class="form-floating">
                     <input type="text" class="form-control @error('proprietario') is-invalid @enderror" id="proprietario" name="proprietario" value="{{ old('proprietario', $vehicle->proprietario ?? '') }}" required />
@@ -106,6 +105,23 @@
                     </div>
                   </div>
                 </div>
+
+                <div class="mt-2 col-12">
+                  <label for="models" class="form-label">Modelo</label>
+                  <select name="vehicle_model_id" size="10" id="models" class="form-control">
+                    @empty (!$models)
+                      @foreach ($models as $model)
+                        <option value="{{ $model->id }}">{{ $model->name }}</option>
+                      @endforeach
+                    @endempty
+                  </select>
+                  <div class="invalid-feedback">
+                    @error('models')
+                    {{ $message }}
+                    @enderror
+                  </div>
+                </div>
+
               </div>
 
               <div class="row mt-4 d-flex justify-content-end">

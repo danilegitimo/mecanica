@@ -31,7 +31,7 @@
       </li>
 
       <li class="nav-item">
-        <a  class="nav-link {{ request()->is('suplliers/*') || request()->routeIs('suplliers.index') ? 'active' : '' }}" href="{{ route('suplliers.index') }}">Fornecedores</a>
+        <a  class="nav-link {{ request()->is('suppliers/*') || request()->routeIs('suppliers.index') ? 'active' : '' }}" href="{{ route('suppliers.index') }}">Fornecedores</a>
       </li>
       
       <li class="nav-item">

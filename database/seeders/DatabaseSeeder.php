@@ -13,7 +13,9 @@ class DatabaseSeeder extends Seeder {
    * Seed the application's database.
    */
   public function run(): void {
-    //
+    if ( DB::table('vehicle_models')->count() <= 0 ) {
+      $this->call(VehiclesModelsSeeder::class);
+    }
   }
 
 }

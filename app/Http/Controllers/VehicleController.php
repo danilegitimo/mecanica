@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Http\Requests\CreateOrUpdateVehicle;
 use App\Models\Vehicle;
+use App\Models\VehicleModel;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class VehicleController extends Controller
 {
@@ -18,19 +18,20 @@ class VehicleController extends Controller
 
   public function create()
   {
-    return view('vehicles.form', ['vehicle' => null]);
+    $models = VehicleModel::all();
+    return view('vehicles.form', ['vehicle' => null, 'models' => $models]);
   }
 
-  public function store(Request $request)
+  public function store(CreateOrUpdateVehicle $request)
   {
     $validated = $request->validate([
       "placa"      => "required|min:3|max:255|unique:vehicles,placa",
       "renavam"     => "required|min:3|max:255|unique:vehicles,renavam",
+      "vehicle_model_id" => "required|exists:vehicle_models,id",
       "proprietario" => "required|min:4",
       "cor"       => "required|min:3",
       "ano"        => "required|string|min:4|max:4",
     ]);
-
     $vehicle = Vehicle::create($validated);
 
     if ($vehicle) {
@@ -44,21 +45,21 @@ class VehicleController extends Controller
 
   public function edit(string $id)
   {
+    $models = VehicleModel::all();
     $vehicle = Vehicle::findOrFail($id);
-    return view('vehicles.form', compact('vehicle'));
+    return view('vehicles.form', compact('vehicle', 'models'));
   }
 
-  public function update(Request $request, string $id)
+  public function update(Request $request, Vehicle $vehicle)
   {
 
-    $vehicle = Vehicle::findOrFail($id);
-
     $validated = $request->validate([
-      "placa"      => "required|min:3|max:255|unique:vehicles,placa",
-      "renavam"     => "required|min:3|max:255|unique:vehicles,renavam",
+      "placa"      => "required|min:3|max:255|unique:vehicles,placa,".$vehicle->id,
+      "renavam"     => "required|min:3|max:255|unique:vehicles,renavam,".$vehicle->id,
       "proprietario" => "required|min:4",
-      "cor"       => "required|min:3",
+      "cor"        => "required|min:3",
       "ano"        => "required|string|min:4|max:4",
+      "vehicle_model_id" => "required|exists:vehicle_models,id"
     ]);
 
     $vehicle->update($validated);

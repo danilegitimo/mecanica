@@ -16,5 +16,9 @@ class Vehicle extends Model
         'ano',
         'user_id'
     ];
-    
+
+    public function modelo() {
+        return $this->hasOne(VehicleModel::class, 'id', 'vehicle_model_id');
+    }
+
 }

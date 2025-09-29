@@ -41,44 +41,34 @@
 
           <header class="content-header mb-4" style="display: flex; justify-content: space-between; align-items: center;">
             <div style="width: 100%;">
-              <h1>Veículos</h1>
-              <p>Todos os veículos cadastrados e disponíveis para consulta no banco de dados.</p>
+              <h1>Clientes</h1>
+              <p>Todos os clientes cadastrados e disponíveis para consulta no banco de dados.</p>
             </div>
             <div>
-              <a href="{{ route('vehicles.create') }}" class="btn btn-success">Cadastrar</a>
+              <a href="{{ route('clients.create') }}" class="btn btn-success">Cadastrar</a>
             </div>
           </header>
 
           <div>
-            @if ( $vehicles->isNotEmpty() )
+            @if ( $clients->isNotEmpty() )
             <table class="default-table">
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Placa</th>
-                  <th>RENAVAM</th>
-                  <th>Proprietário</th>
-                  <th>Cor</th>
-                  <th>Ano</th>
-                  <th>Modelo</th>
-                  <th>Em serviço?</th>
+                  <th>Nome</th>
+                  <th>Contato</th>
                   <th>Ações</th>
                 </tr>
               </thead>
               <tbody>
-                @foreach ($vehicles as $vehicle)
+                @foreach ($clients as $client)
                 <tr>
-                  <td>{{ $vehicle->id }}</td>
-                  <td>{{ $vehicle->placa }}</td>
-                  <td>{{ $vehicle->renavam }}</td>
-                  <td>{{ $vehicle->proprietario }}</td>
-                  <td>{{ $vehicle->cor }}</td>
-                  <td>{{ $vehicle->ano }}</td>
-                  <td>{{ $vehicle->modelo->name }}</td>
-                  <td>Não</td>
+                  <td>{{ $client->id }}</td>
+                  <td>{{ $client->name }}</td>
+                  <td>{{ $client->contact ?? '*SEM CONTATO' }}</td>
                   <td>
-                    <a href="{{ route('vehicles.edit', $vehicle->id) }}" class="btn btn-success">Editar</a>
-                    <form action="{{ route('vehicles.destroy', $vehicle->id) }}" method="POST" style="display:inline">
+                    <a href="{{ route('clients.edit', $client->id) }}" class="btn btn-success">Editar</a>
+                    <form action="{{ route('clients.destroy', $client->id) }}" method="POST" style="display:inline">
                       @csrf
                       @method('DELETE')
                       <button type="submit" class="btn btn-danger">Excluir</button>
@@ -89,7 +79,7 @@
               </tbody>
             </table>
             @else
-             <p>Não há nenhum veículo no banco de dados. Cadastre um.</p>
+             <p>Não há nenhum cliente no banco de dados. Cadastre um.</p>
             @endif
           </div>
         </div>
