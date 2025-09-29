@@ -1,44 +1,37 @@
 <nav class="col-md-2 d-none d-md-flex sidebar flex-column">
   <div class="mb-4 p-2">
-    <h5 class="fw-bold">São Expedito</h5>
+    <h5 class="fw-bold">Serviços Automotivos</h5>
   </div>
   <ul class="nav flex-column">
 
-    @if ( Auth::user()->is_admin || Route::has('dashboard') )
     <li class="nav-item">
-      <a  class="nav-link {{ request()->is('dashboard/*') || request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Painel</a>
+      <a  class="nav-link {{ request()->is('dashboard/*') || request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Início</a>
     </li>
-    @endif
 
-    @if ( Auth::user()->is_admin || Route::has('responsibles.index') )
     <li class="nav-item">
-      <a  class="nav-link {{ request()->is('responsibles/*') || request()->routeIs('responsibles.index') ? 'active' : '' }}" href="{{ route('responsibles.index') }}">Responsáveis</a>
+      <a  class="nav-link {{ request()->is('vehicles/*') || request()->routeIs('vehicles.index') ? 'active' : '' }}" href="{{ route('vehicles.index') }}">Veículos</a>
     </li>
-    @endif
 
-    @if ( Auth::user()->is_admin || Route::has('patients.index') )
     <li class="nav-item">
-      <a class="nav-link {{ request()->is('patients/*') || request()->routeIs('patients.index') ? 'active' : '' }}" href="{{ route('patients.index') }}">Pacientes</a>
+      <a  class="nav-link {{ request()->is('services/*') || request()->routeIs('services.index') ? 'active' : '' }}" href="{{ route('services.index') }}">Serviços</a>
     </li>
-    @endif
 
-    @if ( Auth::user()->is_admin || Route::has('medications.index') )
     <li class="nav-item">
-    <a  class="nav-link {{ request()->is('medications/*') || request()->routeIs('medications.index') ? 'active' : '' }}" href="{{ route('medications.index') }}">Medicações</a>
+      <a  class="nav-link {{ request()->is('orders/*') || request()->routeIs('orders.index') ? 'active' : '' }}" href="{{ route('orders.index') }}">Ordens de Serviço</a>
     </li>
-    @endif
 
-    @if ( Auth::user()->is_admin || Route::has('activities.index') )
     <li class="nav-item">
-      <a  class="nav-link {{ request()->is('activities/*') || request()->routeIs('activities.index') ? 'active' : '' }}" href="{{ route('activities.index') }}">Atividades</a>
+      <a  class="nav-link {{ request()->is('suplliers/*') || request()->routeIs('suplliers.index') ? 'active' : '' }}" href="{{ route('suplliers.index') }}">Fornecedores</a>
     </li>
-    @endif
 
-    @if ( Auth::user()->is_admin || Route::has('diseases.index') )
     <li class="nav-item">
-      <a  class="nav-link {{ request()->is('diseases/*') || request()->routeIs('diseases.index') ? 'active' : '' }}" href="{{ route('diseases.index') }}">Doenças</a>
+      <a  class="nav-link {{ request()->is('parts/*') || request()->routeIs('parts.index') ? 'active' : '' }}" href="{{ route('parts.index') }}">Peças</a>
     </li>
-    @endif
+
+    <li class="nav-item">
+      <a  class="nav-link {{ request()->is('clients/*') || request()->routeIs('clients.index') ? 'active' : '' }}" href="{{ route('clients.index') }}">Clientes</a>
+    </li>
+
   </ul>
   <div class="mt-auto p-2">
     <p>{{ auth()->user()->name }}</p>

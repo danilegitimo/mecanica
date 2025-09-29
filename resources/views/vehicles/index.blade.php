@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Casa de Repouso</title>
+  <title>Mecânica</title>
 
   @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
   @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -41,36 +41,41 @@
 
           <header class="content-header mb-4" style="display: flex; justify-content: space-between; align-items: center;">
             <div style="width: 100%;">
-              <h1>Medicações</h1>
-              <p>É importante que as medicações estejam atualizadas para estarem disponível para equipe médica</p>
+              <h1>Veículos</h1>
+              <p>Todos os veículos cadastrados e disponíveis para consulta no banco de dados.</p>
             </div>
             <div>
-              <a href="{{ route('medications.create') }}" class="btn btn-success">Cadastrar</a>
+              <a href="{{ route('vehicles.create') }}" class="btn btn-success">Cadastrar</a>
             </div>
           </header>
 
           <div>
-            @if ( $medications->isNotEmpty() )
+            @if ( $vehicles->isNotEmpty() )
             <table class="default-table">
               <thead>
                 <tr>
-                  <th>Nome</th>
-                  <th>Dosagem</th>
-                  <th>Quantidade</th>
-                  <th>Recorrência</th>
+                  <th>ID</th>
+                  <th>Placa</th>
+                  <th>RENAVAM</th>
+                  <th>Proprietário</th>
+                  <th>Cor</th>
+                  <th>Ano</th>
+                  <th>Em serviço?</th>
                   <th>Ações</th>
                 </tr>
               </thead>
               <tbody>
-                @foreach ($medications as $patient)
+                @foreach ($vehicles as $vehicle)
                 <tr>
-                  <td>{{ $patient->name }}</td>
-                  <td>{{ number_format($patient->dosage) }}/mL</td>
-                  <td>{{ number_format($patient->quantity) }}</td>
-                  <td>{{ number_format($patient->period_hours) }}/h</td>
+                  <td>{{ $vehicle->placa }}</td>
+                  <td>{{ $vehicle->renavam }}</td>
+                  <td>{{ $vehicle->proprietario }}</td>
+                  <td>{{ $vehicle->cor }}</td>
+                  <td>{{ $vehicle->ano }}</td>
+                  <td>Não</td>
                   <td>
-                    <a href="{{ route('medications.edit', $patient->id) }}" class="btn btn-success">Editar</a>
-                    <form action="{{ route('medications.destroy', $patient->id) }}" method="POST" style="display:inline">
+                    <a href="{{ route('vehicles.edit', $user->id) }}" class="btn btn-success">Editar</a>
+                    <form action="{{ route('vehicles.destroy', $user->id) }}" method="POST" style="display:inline">
                       @csrf
                       @method('DELETE')
                       <button type="submit" class="btn btn-danger">Excluir</button>
@@ -81,10 +86,9 @@
               </tbody>
             </table>
             @else
-            <p>Não há medicações para mostrar. Cadastre uma.</p>
+             <p>Não há nenhum veículo no banco de dados. Cadastre um.</p>
             @endif
           </div>
-
         </div>
       </main>
     </div>

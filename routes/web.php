@@ -1,11 +1,11 @@
 <?php
 
-use App\Http\Controllers\ActivityController;
-use App\Http\Controllers\DiseaseController;
-use App\Http\Controllers\MedicationController;
-use App\Http\Controllers\PatientController;
-use App\Http\Controllers\ResponsiblesController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PartsController;
+use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VehicleController;
 use Illuminate\Support\Facades\Route;
 
 require __DIR__.'/auth.php';
@@ -18,9 +18,12 @@ Route::middleware('auth')->group(function () {
       Route::get('{user}/user', 'show')->name('users.show');
     });
 
-  Route::resource('responsibles', ResponsiblesController::class);
-  Route::resource('patients', PatientController::class);
-  Route::resource('medications', MedicationController::class);
-  Route::resource('activities', ActivityController::class);
-  Route::resource('diseases', DiseaseController::class);
+  Route::resource('vehicles', VehicleController::class);
+  Route::resource('clients', UserController::class);
+  Route::resource('services', ServiceController::class);
+  Route::resource('orders', OrderController::class);
+  Route::resource('services', ServiceController::class);
+  Route::resource('parts', PartsController::class);
+  Route::resource('suplliers', SupplierController::class);
+
 });

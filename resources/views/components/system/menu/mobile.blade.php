@@ -3,7 +3,7 @@
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="mx-auto flex-grow-1 ps-2">
-    <strong>Casa de Repouso</strong>
+    <strong>Serviços Automotivos</strong>
   </div>
 </div>
 
@@ -14,41 +14,33 @@
   </div>
   <div class="offcanvas-body">
     <ul class="nav flex-column">
-    @if ( Auth::user()->is_admin || Route::has('dashboard') )
-    <li class="nav-item">
-      <a  class="nav-link {{ request()->is('dashboard/*') || request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Painel</a>
-    </li>
-    @endif
+      <li class="nav-item">
+        <a  class="nav-link {{ request()->is('dashboard/*') || request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Início</a>
+      </li>
 
-    @if ( Auth::user()->is_admin || Route::has('responsibles.index') )
-    <li class="nav-item">
-      <a  class="nav-link {{ request()->is('responsibles/*') || request()->routeIs('responsibles.index') ? 'active' : '' }}" href="{{ route('responsibles.index') }}">Responsáveis</a>
-    </li>
-    @endif
+      <li class="nav-item">
+        <a  class="nav-link {{ request()->is('vehicles/*') || request()->routeIs('vehicles.index') ? 'active' : '' }}" href="{{ route('vehicles.index') }}">Veículos</a>
+      </li>
 
-    @if ( Auth::user()->is_admin || Route::has('patients.index') )
-    <li class="nav-item">
-      <a class="nav-link {{ request()->is('patients/*') || request()->routeIs('patients.index') ? 'active' : '' }}" href="{{ route('patients.index') }}">Pacientes</a>
-    </li>
-    @endif
+      <li class="nav-item">
+        <a  class="nav-link {{ request()->is('services/*') || request()->routeIs('services.index') ? 'active' : '' }}" href="{{ route('services.index') }}">Serviços</a>
+      </li>
 
-    @if ( Auth::user()->is_admin || Route::has('medications.index') )
-    <li class="nav-item">
-    <a  class="nav-link {{ request()->is('medications/*') || request()->routeIs('medications.index') ? 'active' : '' }}" href="{{ route('medications.index') }}">Medicações</a>
-    </li>
-    @endif
+      <li class="nav-item">
+        <a  class="nav-link {{ request()->is('orders/*') || request()->routeIs('orders.index') ? 'active' : '' }}" href="{{ route('orders.index') }}">Ordens de Serviço</a>
+      </li>
 
-    @if ( Auth::user()->is_admin || Route::has('activities.index') )
-    <li class="nav-item">
-      <a  class="nav-link {{ request()->is('activities/*') || request()->routeIs('activities.index') ? 'active' : '' }}" href="{{ route('activities.index') }}">Atividades</a>
-    </li>
-    @endif
+      <li class="nav-item">
+        <a  class="nav-link {{ request()->is('suplliers/*') || request()->routeIs('suplliers.index') ? 'active' : '' }}" href="{{ route('suplliers.index') }}">Fornecedores</a>
+      </li>
+      
+      <li class="nav-item">
+        <a  class="nav-link {{ request()->is('parts/*') || request()->routeIs('parts.index') ? 'active' : '' }}" href="{{ route('parts.index') }}">Peças</a>
+      </li>
 
-    @if ( Auth::user()->is_admin || Route::has('diseases.index') )
-    <li class="nav-item">
-      <a  class="nav-link {{ request()->is('diseases/*') || request()->routeIs('diseases.index') ? 'active' : '' }}" href="{{ route('diseases.index') }}">Doenças</a>
-    </li>
-    @endif
+      <li class="nav-item">
+        <a  class="nav-link {{ request()->is('clients/*') || request()->routeIs('clients.index') ? 'active' : '' }}" href="{{ route('clients.index') }}">Clientes</a>
+      </li>
     </ul>
   </div>
 </div>

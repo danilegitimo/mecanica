@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
-class ResponsiblesController extends Controller
+class ServiceController extends Controller
 {
 
   public function index()

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Casa de Repouso</title>
+  <title>Mecânica</title>
 
   @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
   @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -26,30 +26,31 @@
         <div class="container-fluid">
           <header class="content-header mb-4" style="display: flex; justify-content: space-between; align-items: center;">
             <div style="width: 100%;">
-              <h1>Medicações</h1>
-              <p>É importante que as medicações estejam atualizadas para estarem disponível para equipe médica</p>
+              <h1>Veículos</h1>
+              <p>Por favor, mantenha os dados do veículo atualizados.</p>
             </div>
             <div>
-              <a href="{{ route('medications.index') }}" class="btn btn-success">Voltar</a>
+              <a href="{{ route('vehicles.index') }}" class="btn btn-success">Voltar</a>
             </div>
           </header>
 
           <div>
-            <form method="POST" action="{{ isset($medication) ? route('medications.update', $medication->id) : route('medications.store') }} " enctype="multipart/form-data">
+            <form method="POST" action="{{ isset($vehicle) ? route('vehicles.update', 1) : route('vehicles.store') }} " enctype="multipart/form-data">
 
               @csrf
 
-              @if ( isset($medication) )
+              @if ( isset($vehicle) )
               @method('PUT')
               @endif
 
               <div class="row mb-2">
+
                 <div class="col-3">
                   <div class="form-floating">
-                    <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $medication->name ?? '') }}" required />
-                    <label for="name" class="form-label">Nome</label>
+                    <input type="text" class="form-control @error('placa') is-invalid @enderror" id="placa" name="placa" value="{{ old('placa', $vehicle->placa ?? '') }}" required />
+                    <label for="placa" class="form-label">Placa</label>
                     <div class="invalid-feedback">
-                      @error('name')
+                      @error('placa')
                       {{ $message }}
                       @enderror
                     </div>
@@ -58,10 +59,10 @@
 
                 <div class="col-3">
                   <div class="form-floating">
-                    <input type="number" class="form-control @error('dosage') is-invalid @enderror" id="dosage" name="dosage" value="{{ old('dosage', $medication->dosage ?? '') }}" required />
-                    <label for="dosage" class="form-label">Dosagem (mL)</label>
+                    <input type="text" class="form-control @error('renavam') is-invalid @enderror" id="renavam" name="renavam" value="{{ old('renavam', $vehicle->renavam ?? '') }}" required />
+                    <label for="renavam" class="form-label">RENAVAM</label>
                     <div class="invalid-feedback">
-                      @error('dosage')
+                      @error('renavam')
                       {{ $message }}
                       @enderror
                     </div>
@@ -70,24 +71,21 @@
 
                 <div class="col-3">
                   <div class="form-floating">
-                    <input type="number" class="form-control @error('quantity') is-invalid @enderror" id="quantity" name="quantity" value="{{ old('quantity', $medication->quantity ?? '') }}" required />
-                    <label for="quantity" class="form-label">Quantidade</label>
-                    <span class="form-text">Se for comprimido, adicionar a quantidade correta. Se for xarope, adicionar apenas um.</span>
+                    <input type="text" class="form-control @error('cor') is-invalid @enderror" id="cor" name="cor" value="{{ old('cor', $vehicle->cor ?? '') }}" required />
+                    <label for="cor" class="form-label">Cor</label>
                     <div class="invalid-feedback">
-                      @error('quantity')
+                      @error('cor')
                       {{ $message }}
                       @enderror
                     </div>
                   </div>
                 </div>
-
                 <div class="col-3">
                   <div class="form-floating">
-                    <input type="number" class="form-control @error('period_hours') is-invalid @enderror" id="period_hours" name="period_hours" value="{{ old('period_hours', $medication->period_hours ?? '') }}" required />
-                    <label for="period_hours" class="form-label">Período de Intervalo</label>
-                    <span class="form-text">Total de horas de intervalo para doses em diante.</span>
+                    <input type="text" class="form-control @error('ano') is-invalid @enderror" id="ano" name="ano" value="{{ old('ano', $vehicle->ano ?? '') }}" required />
+                    <label for="ano" class="form-label">Ano</label>
                     <div class="invalid-feedback">
-                      @error('period_hours')
+                      @error('ano')
                       {{ $message }}
                       @enderror
                     </div>
@@ -95,13 +93,14 @@
                 </div>
               </div>
 
-              <div class="row mb-2">
-                <div class="col-12">
+              <div class="row mb-4">
+
+                <div class="col">
                   <div class="form-floating">
-                    <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description" value="{{ old('description', $medication->description ?? '') }}" required style="height:200px"></textarea>
-                    <label for="description" class="form-label">Descrição</label>
+                    <input type="text" class="form-control @error('proprietario') is-invalid @enderror" id="proprietario" name="proprietario" value="{{ old('proprietario', $vehicle->proprietario ?? '') }}" required />
+                    <label for="proprietario" class="form-label">Prioprietário</label>
                     <div class="invalid-feedback">
-                      @error('description')
+                      @error('proprietario')
                       {{ $message }}
                       @enderror
                     </div>
