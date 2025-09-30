@@ -6,6 +6,10 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VehicleController;
+use App\Models\Order;
+use App\Models\Parts;
+use App\Models\User;
+use App\Models\Vehicle;
 use Illuminate\Support\Facades\Route;
 
 require __DIR__.'/auth.php';
@@ -13,7 +17,16 @@ require __DIR__.'/auth.php';
 Route::middleware('auth')->group(function () {
 
   Route::get('/', function () {
-    return view("index");
+
+    $orders   = Order::all();
+    $vehicles = Vehicle::all()->count();
+    $clients  = User::all()->count();
+    $parts    = Parts::all()->count();
+
+    return view("index", compact(
+      'parts', 'vehicles', 'orders', 'clients'
+    ));
+
   })->name("dashboard");
 
   Route::resource('vehicles', VehicleController::class);
