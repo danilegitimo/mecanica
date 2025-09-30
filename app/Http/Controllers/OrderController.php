@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
+use App\Models\OrderPart;
+use App\Models\OrderService;
+use App\Models\Parts;
+use App\Models\Service;
 use App\Models\User;
+use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -11,89 +17,99 @@ class OrderController extends Controller
 
   public function index()
   {
-    $users = User::orderBy('created_at', 'desc')->whereRoleId(1)->paginate(10);
-    return view('responsibles.index', compact('users'));
+    $orders = Order::orderBy('created_at', 'desc')->paginate(10);
+    return view('orders.index', compact('orders'));
   }
 
   public function create()
   {
-    return view('responsibles.form', ['user' => null]);
+
+    $clients  = User::all();
+    $services = Service::all();
+    $vehicles = Vehicle::all();
+    $parts    = Parts::all();
+
+    return view('orders.form', [
+      'order'    => null, 
+      'services' => $services,
+      'vehicles' => $vehicles,
+      'parts'    => $parts,
+      'clients'  => $clients
+    ]);
   }
 
   public function store(Request $request)
   {
     $validated = $request->validate([
-      "name"      => "required|min:3|max:255",
-      "email"     => "required|min:3|max:255|unique:users,email",
-      "telephone" => "required|min:10",
-      "cpf"       => "required|min:10|unique:users,cpf",
-      "rg"        => "bail|min:6|unique:users,rg",
-      "birthdate"    => "required|date",
-      "address"      => "nullable|min:5|max:255",
-      "password"     => "required|min:6",
+      "vehicle_id" => ["required"],
+      "client_id"  => ["required"],
+      "services" => ["required", "array"],
+      "parts" => ["nullable", "array"]
     ]);
 
-    $validated['role_id'] = 1;
-
-    if ( !empty($validated['password']) ) {
-      $validated['password'] = Hash::make($validated['password']);
-    }
-
-    $user = User::create($validated);
-
-    if ($user) {
-      return redirect()->route('responsibles.index')
-        ->with('success', 'O novo usuário foi criado!');
-    } else {
-      return redirect()->route('responsibles.index')
-        ->with('error', 'O novo usuário não foi criado!');
-    }
-  }
-
-  public function edit(string $id)
-  {
-    $user = User::findOrFail($id);
-    return view('responsibles.form', compact('user'));
-  }
-
-  public function update(Request $request, string $id)
-  {
-
-    $user = User::findOrFail($id);
-
-    $validated = $request->validate([
-      "name"      => "required|min:3|max:255",
-      "email"     => "required|min:3|max:255|unique:users,email," . $user->id,
-      "telephone" => "required|min:10",
-      "cpf"       => "required|min:10|unique:users,cpf," . $user->id,
-      "rg"        => "bail|min:6|unique:users,rg," . $user->id,
-      "birthdate"    => "required|date",
-      "address"      => "nullable|min:5|max:255",
-      "password"     => "nullable|min:6"
+    $order = Order::create([
+      "vehicle_id" => $request->vehicle_id,
+      "user_id"    => $request->client_id
     ]);
 
-    if ( !empty($validated['password']) ) {
-      $validated['password'] = Hash::make($validated['password']);
-    } else {
-      unset($validated['password']);
+    foreach ($request->services as $service) {
+      OrderService::create([
+        'order_id'   => $order->id,
+        'service_id' => $service
+      ]);
     }
 
-    $user->update($validated);
+    if ( $request->has('parts') ) {
+      foreach ($request->parts as $part) {
+        OrderPart::create([
+          'order_id' => $order->id,
+          'parts_id' => $part
+        ]);
+      }
+    }
 
-    if ($user) {
-      return redirect()->route('responsibles.index')
-        ->with('success', "O usuário {$user->name} foi atualizado!");
+    if ($order) {
+      return redirect()->route('orders.index')
+        ->with('success', 'Uma nova ordem foi criado!');
     } else {
-      return redirect()->route('responsibles.index')
-        ->with('error', "Não foi possível atualizar o usuário!");
+      return redirect()->route('orders.index')
+        ->with('error', 'Uma nova ordem não foi criado!');
     }
   }
 
-  public function destroy(string $id)
+  public function edit(Order $order)
   {
-    $user = User::findOrFail($id);
-    $user->delete();
-    return redirect()->route('responsibles.index')
-      ->with('success', "O usuário {$user->name} foi deletado!");
+
+    $clients  = User::all();
+    $services = Service::all();
+    $vehicles = Vehicle::all();
+    $parts    = Parts::all();
+
+    return view('orders.form', compact(
+      'order', 'services', 'vehicles', 'parts', 'clients'
+    ));
+  }
+
+  public function update(Request $request, Order $order)
+  {
+
+    $validated = $request->validate();
+
+    $order->update($validated);
+
+    if ($order) {
+      return redirect()->route('orders.index')
+        ->with('success', "A ordem de serviço {$order->id} foi atualizada!");
+    } else {
+      return redirect()->route('orders.index')
+        ->with('error', "Não foi possível atualizar a ordem de serviço!");
+    }
+  }
+
+  public function destroy(Order $order)
+  {
+    $order->delete();
+    return redirect()->route('orders.index')
+      ->with('success', "A ordem de serviço {$order->id} foi deletada!");
   }
 }

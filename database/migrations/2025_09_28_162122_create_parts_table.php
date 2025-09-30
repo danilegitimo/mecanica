@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('parts', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Supplier::class);
+            $table->foreignIdFor(Supplier::class)->constrained();
             $table->string('name');
             $table->integer('quantity');
             $table->timestamps();

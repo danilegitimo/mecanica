@@ -12,4 +12,5 @@ class Parts extends Model
         'quantity',
         'supplier_id'
     ];
+    
 }
