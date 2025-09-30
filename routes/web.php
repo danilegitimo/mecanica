@@ -12,11 +12,9 @@ require __DIR__.'/auth.php';
 
 Route::middleware('auth')->group(function () {
 
-  Route::controller(UserController::class)
-    ->group(function () {
-      Route::get('/', 'index')->name('dashboard');
-      Route::get('{user}/user', 'show')->name('users.show');
-    });
+  Route::get('/', function () {
+    return view("index");
+  })->name("dashboard");
 
   Route::resource('vehicles', VehicleController::class);
   Route::resource('clients', UserController::class);
