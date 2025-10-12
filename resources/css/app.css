@@ -1,5 +1,5 @@
+@import "bootstrap";
 
-/* 
 body {
   background-color: rgb(252, 252, 252);
 }
@@ -19,22 +19,20 @@ body {
 
 .sidebar .nav-link.active,
 .sidebar .nav-link:hover {
-  background-color: #f83838;
+  background-color: brown;
   color: white;
-}
-
-.content {
-  background-color: rgb(252, 252, 252);
-  padding: 2rem;
-}
-
-.content-header > p {
-  color: rgb(120, 120, 120);
 }
 
 .default-table {
   border-radius: 05px;
   width: 100%;
+}
+
+.table-header {
+  border-left: 01px solid rgb(230, 230, 230);
+  border-right: 01px solid rgb(230, 230, 230);
+  border-top: 01px solid rgb(230, 230, 230);
+  padding: 10px;
 }
 
 .default-table,
@@ -55,4 +53,4 @@ body {
 .card-master {
   background-color: #f83838 !important;
   min-height: 424px;
-} */
+}

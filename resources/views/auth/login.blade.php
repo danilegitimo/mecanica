@@ -44,7 +44,7 @@
               <p>Para continuar, você precisa ter uma conta. Por favor, preencha todos os campos abaixos.</p>
             </div>
           </div>
-          <form action="/register" method="POST" enctype="multipart/form-data" class="w-100">
+          <form action="/login" method="POST" enctype="multipart/form-data" class="w-100">
 
             @csrf
 

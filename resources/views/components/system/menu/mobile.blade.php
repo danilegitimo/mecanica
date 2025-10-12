@@ -3,7 +3,7 @@
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="mx-auto flex-grow-1 ps-2">
-    <strong>Serviços Automotivos</strong>
+    <strong>{{ env('APP_NAME') }}</strong>
   </div>
 </div>
 
@@ -14,33 +14,7 @@
   </div>
   <div class="offcanvas-body">
     <ul class="nav flex-column">
-      <li class="nav-item">
-        <a  class="nav-link {{ request()->is('dashboard/*') || request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Início</a>
-      </li>
-
-      <li class="nav-item">
-        <a  class="nav-link {{ request()->is('vehicles/*') || request()->routeIs('vehicles.index') ? 'active' : '' }}" href="{{ route('vehicles.index') }}">Veículos</a>
-      </li>
-
-      <li class="nav-item">
-        <a  class="nav-link {{ request()->is('services/*') || request()->routeIs('services.index') ? 'active' : '' }}" href="{{ route('services.index') }}">Serviços</a>
-      </li>
-
-      <li class="nav-item">
-        <a  class="nav-link {{ request()->is('orders/*') || request()->routeIs('orders.index') ? 'active' : '' }}" href="{{ route('orders.index') }}">Ordens de Serviço</a>
-      </li>
-
-      <li class="nav-item">
-        <a  class="nav-link {{ request()->is('suppliers/*') || request()->routeIs('suppliers.index') ? 'active' : '' }}" href="{{ route('suppliers.index') }}">Fornecedores</a>
-      </li>
-      
-      <li class="nav-item">
-        <a  class="nav-link {{ request()->is('parts/*') || request()->routeIs('parts.index') ? 'active' : '' }}" href="{{ route('parts.index') }}">Peças</a>
-      </li>
-
-      <li class="nav-item">
-        <a  class="nav-link {{ request()->is('clients/*') || request()->routeIs('clients.index') ? 'active' : '' }}" href="{{ route('clients.index') }}">Clientes</a>
-      </li>
+      @include("components/system/menu/links")
     </ul>
   </div>
 </div>
