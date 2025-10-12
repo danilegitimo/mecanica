@@ -7,20 +7,16 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller {
 
-  
-  public function index(Request $request)
-  {
+  public function index(Request $request) {
     $clients = User::orderBy('created_at', 'desc')->whereNot('id', $request->user()->id)->paginate(10);
     return view('clients.index', compact('clients'));
   }
 
-  public function create()
-  {
+  public function create() {
     return view('clients.form', ['user' => null]);
   }
 
-  public function store(Request $request)
-  {
+  public function store(Request $request) {
     $validated = $request->validate([
       "name" => "required|min:3|max:255",
       "contact" => "required|min:3|max:255",
@@ -40,13 +36,11 @@ class UserController extends Controller {
     }
   }
 
-  public function edit(User $user)
-  {
+  public function edit(User $user) {
     return view('clients.form', compact('user'));
   }
 
-  public function update(Request $request, User $user)
-  {
+  public function update(Request $request, User $user) {
 
      $validated = $request->validate([
       "name" => "required|min:3|max:255",
@@ -64,8 +58,7 @@ class UserController extends Controller {
     }
   }
 
-  public function destroy(string $id)
-  {
+  public function destroy(string $id) {
     $user = User::findOrFail($id);
     $user->delete();
     return redirect()->route('clients.index')

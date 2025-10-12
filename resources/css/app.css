@@ -1,7 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
+/* 
 body {
   background-color: rgb(252, 252, 252);
 }
@@ -57,4 +55,4 @@ body {
 .card-master {
   background-color: #f83838 !important;
   min-height: 424px;
-}
+} */
