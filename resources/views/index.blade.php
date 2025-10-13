@@ -29,9 +29,6 @@
                 <h1>Bem-vindo(a)!</h1>
                 <p>Veja os principais pontos do sistema de forma rápida nessa tela.</p>
               </div>
-              <div>
-                <button>#</button>
-              </div>
             </header>
 
             <div>

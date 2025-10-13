@@ -1,141 +1,125 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ env('APP_NAME') }}</title>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mecânica</title>
+    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+      @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @endif
 
-  @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-  @vite(['resources/css/app.css', 'resources/js/app.js'])
-  @endif
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    @routes
+  </head>
+  <body>
 
-  @routes
-</head>
+    @include("components/system/menu/mobile")
 
-<body>
+    <div class="container-fluid">
+      <div class="row">
 
-  @include("components/system/menu/mobile")
+        @include("components/system/menu/desktop")
 
-  <div class="container-fluid">
-    <div class="row">
+        <main class="col-md-10 ms-sm-auto content p-5">
+          <div class="container-fluid">
 
-      @include("components/system/menu/desktop")
+            @include("components/session/session")
 
-      <main class="col-md-10 ms-sm-auto content p-5">
-        <div class="container-fluid">
-          <header class="content-header mb-4" style="display: flex; justify-content: space-between; align-items: center;">
-            <div style="width: 100%;">
-              <h1>Veículos</h1>
-              <p>Por favor, mantenha os dados do veículo atualizados.</p>
-            </div>
+            <header class="content-header mb-4 d-flex justify-content-between align-items-center">
+              <div>
+                <h1>Veículos</h1>
+                <p>Para ter um serviço de qualidade, é importante manter os registros no banco de dados atualizados.</p>
+              </div>
+              <div>
+                <a href="{{ route('vehicles.index') }}" class="btn btn-success">Voltar</a>
+              </div>
+            </header>
             <div>
-              <a href="{{ route('vehicles.index') }}" class="btn btn-success">Voltar</a>
+              <form
+                action="{{ isset($vehicle) ? route('vehicles.update') : route('vehicles.store') }}" method="POST" class="container-fluid">
+                @csrf @isset($vehicle) @method('PUT') @endisset
+
+                <div class="row">
+                  <div class="col">
+                    <label class="form-label" for="plate">Placa:</label>
+                    <input class="form-control" name="plate" type="text" id="plate" placeholder="" />
+                  </div>
+                  <div class="col">
+                    <label class="form-label" for="register_code">RENAVAM:</label>
+                    <input class="form-control" name="register_code" type="text" id="register_code" placeholder="" />
+                  </div>
+                  <div class="col">
+                    <label class="form-label" for="own_identify">CPF/CNPJ do Proprietário:</label>
+                    <input class="form-control" name="own_identify" type="text" id="own_identify" placeholder="" />
+                  </div>
+                </div>
+                <div class="row mt-3">
+                  <div class="col">
+                    <label for="chassi" class="form-label">Chassi:</label>
+                    <input id="chassi" name="chassi" type="text" class="form-control" placeholder="" />
+                  </div> 
+                  <div class="col">
+                    <label for="year" class="form-label">Ano Fabricação:</label>
+                    <input id="year" name="year" type="text" class="form-control" placeholder="" />
+                  </div>
+                  <div class="col">
+                    <label class="form-label" for="color">Cor predominante:</label>
+                    <select class="form-control" name="color" id="color">
+                      <option value="">Vermelho</option>
+                      <option value="">Vermelho</option>
+                      <option value="">Vermelho</option>
+                      <option value="">Vermelho</option>
+                      <option value="">Vermelho</option>
+                      <option value="">Vermelho</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row mt-3">
+                  <div class="col">
+                    <label class="form-label" for="fuel">Combustível:</label>
+                    <select class="form-control" name="fuel" id="fuel">
+                      <option value="">Alcool</option>
+                      <option value="">Gasolina</option>
+                      <option value="">Diesel</option>
+                      <option value="">GNV</option>
+                      <option value="">Alcool/Gasolina</option>
+                      <option value="">Alcool/Gasolina/GNV</option>
+                    </select>
+                  </div>
+                  <div class="col">
+                    <label class="form-label" for="manufacture">Fabricante:</label>
+                    <select class="form-control" name="manufacture" id="manufacture">
+                      <option value="">Audi</option>
+                      <option value="">BMW</option>
+                    </select>
+                  </div>
+                  <div class="col">
+                    <label class="form-label" for="model">Modelo:</label>
+                    <select class="form-control" name="model" id="model">
+                      <option value="">Audi</option>
+                      <option value="">BMW</option>
+                    </select>
+                  </div>
+                  <div class="col">
+                    <label class="form-label" for="model_version">Versão:</label>
+                    <select class="form-control" name="model_version" id="model_version">
+                      <option value="">Flex</option>
+                      <option value="">Ya</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="mt-4 d-flex justify-content-end">
+                  <button type="submit" class="btn btn-success">
+                    @isset ($vehicle) Atualizar @else Cadastrar @endisset
+                  </button>
+                </div>
+              </form>
             </div>
-          </header>
-
-          <div>
-            <form method="POST" action="{{ isset($vehicle) ? route('vehicles.update', $vehicle->id) : route('vehicles.store') }} " enctype="multipart/form-data">
-
-              @csrf
-
-              @if ( isset($vehicle) )
-              @method('PUT')
-              @endif
-
-              <div class="row mb-2">
-
-                <div class="col-3">
-                  <div class="form-floating">
-                    <input type="text" class="form-control @error('placa') is-invalid @enderror" id="placa" name="placa" value="{{ old('placa', $vehicle->placa ?? '') }}" required />
-                    <label for="placa" class="form-label">Placa</label>
-                    <div class="invalid-feedback">
-                      @error('placa')
-                      {{ $message }}
-                      @enderror
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-3">
-                  <div class="form-floating">
-                    <input type="text" class="form-control @error('renavam') is-invalid @enderror" id="renavam" name="renavam" value="{{ old('renavam', $vehicle->renavam ?? '') }}" required />
-                    <label for="renavam" class="form-label">RENAVAM</label>
-                    <div class="invalid-feedback">
-                      @error('renavam')
-                      {{ $message }}
-                      @enderror
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-3">
-                  <div class="form-floating">
-                    <input type="text" class="form-control @error('cor') is-invalid @enderror" id="cor" name="cor" value="{{ old('cor', $vehicle->cor ?? '') }}" required />
-                    <label for="cor" class="form-label">Cor</label>
-                    <div class="invalid-feedback">
-                      @error('cor')
-                      {{ $message }}
-                      @enderror
-                    </div>
-                  </div>
-                </div>
-                <div class="col-3">
-                  <div class="form-floating">
-                    <input type="text" class="form-control @error('ano') is-invalid @enderror" id="ano" name="ano" value="{{ old('ano', $vehicle->ano ?? '') }}" required />
-                    <label for="ano" class="form-label">Ano</label>
-                    <div class="invalid-feedback">
-                      @error('ano')
-                      {{ $message }}
-                      @enderror
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row mb-4">
-                <div class="col">
-                  <div class="form-floating">
-                    <input type="text" class="form-control @error('proprietario') is-invalid @enderror" id="proprietario" name="proprietario" value="{{ old('proprietario', $vehicle->proprietario ?? '') }}" required />
-                    <label for="proprietario" class="form-label">Prioprietário</label>
-                    <div class="invalid-feedback">
-                      @error('proprietario')
-                      {{ $message }}
-                      @enderror
-                    </div>
-                  </div>
-                </div>
-
-                <div class="mt-2 col-12">
-                  <label for="models" class="form-label">Modelo</label>
-                  <select name="vehicle_model_id" size="10" id="models" class="form-control">
-                    @empty (!$models)
-                      @foreach ($models as $model)
-                        <option value="{{ $model->id }}">{{ $model->name }}</option>
-                      @endforeach
-                    @endempty
-                  </select>
-                  <div class="invalid-feedback">
-                    @error('models')
-                    {{ $message }}
-                    @enderror
-                  </div>
-                </div>
-
-              </div>
-
-              <div class="row mt-4 d-flex justify-content-end">
-                <div class="col-2">
-                  <button type="submit" class="container-fluid p-2 btn btn-success">Salvar</button>
-                </div>
-              </div>
-
-            </form>
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
-  </div>
-</body>
-
+  </body>
 </html>
