@@ -1,130 +1,101 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+@extends('layouts.app')
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mecânica</title>
+@section('title')
+  @isset($order) Ordem ({{ $order->id }}) @else Cadastro de ordem @endif
+@endsection
 
-  @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-  @vite(['resources/css/app.css', 'resources/js/app.js'])
-  @endif
+@section('header.title', 'Ordens de serviços')
 
-  @routes
-</head>
+@section('header.subtitle', 'Para ter um serviço de qualidade, é importante manter os registros no banco de dados atualizados.')
 
-<body>
+@section('header.content')
+<div>
+  <a href="{{ route('orders.index') }}" class="btn btn-success">Voltar</a>
+</div>
+@endsection
 
-  @include("components/system/menu/mobile")
+@section('content')
+<div>
+  <form method="POST" action="{{ isset($order) ? route('orders.update', $order->id) : route('orders.store') }} " enctype="multipart/form-data">
 
-  <div class="container-fluid">
+    @csrf @if ( isset($order) ) @method('PUT') @endif
+
     <div class="row">
-
-      @include("components/system/menu/desktop")
-
-      <main class="col-md-10 ms-sm-auto content p-5">
-        <div class="container-fluid">
-          <header class="content-header mb-4" style="display: flex; justify-content: space-between; align-items: center;">
-            <div style="width: 100%;">
-              <h1>Ordem de Serviço</h1>
-              <p>Por favor, mantenha os dados da ordem de serviço atualizados.</p>
-            </div>
-            <div>
-              <a href="{{ route('orders.index') }}" class="btn btn-success">Voltar</a>
-            </div>
-          </header>
-
-          <div>
-            <form method="POST" action="{{ isset($order) ? route('orders.update', $order->id) : route('orders.store') }} " enctype="multipart/form-data">
-
-              @csrf
-
-              @if ( isset($order) )
-              @method('PUT')
-              @endif
-
-              <div class="row mb-2">
-                <div class="mt-2 col">
-                  <label for="clients" class="form-label">Cliente</label>
-                  <select name="client_id" size="10" id="clients" class="form-control">
-                    @empty (!$clients)
-                      @foreach ($clients as $client)
-                        <option value="{{ $client->id }}">{{ $client->name }}</option>
-                      @endforeach
-                    @endempty
-                  </select>
-                  <div class="invalid-feedback">
-                    @error('clients')
-                    {{ $message }}
-                    @enderror
-                  </div>
-                </div>
-
-                <div class="mt-2 col">
-                  <label for="vehicles" class="form-label">Veículo</label>
-                  <select name="vehicle_id" size="10" id="vehicles" class="form-control">
-                    @empty (!$vehicles)
-                      @foreach ($vehicles as $vehicle)
-                        <option value="{{ $vehicle->id }}">{{ $vehicle->modelo->name }} ({{ $vehicle->placa }})</option>
-                      @endforeach
-                    @endempty
-                  </select>
-                  <div class="invalid-feedback">
-                    @error('vehicles')
-                    {{ $message }}
-                    @enderror
-                  </div>
-                </div>
-              </div>
-
-              <div class="row mb-4">
-
-                <div class="mt-2 col">
-                  <label for="services" class="form-label">Serviços</label>
-                  <select name="services[]" size="10" id="services" class="form-control" multiple>
-                    @empty (!$services)
-                      @foreach ($services as $service)
-                        <option value="{{ $service->id }}">{{ $service->name }}</option>
-                      @endforeach
-                    @endempty
-                  </select>
-                  <div class="invalid-feedback">
-                    @error('services')
-                    {{ $message }}
-                    @enderror
-                  </div>
-                </div>
-
-                <div class="mt-2 col-12">
-                  <label for="parts" class="form-label">Peças</label>
-                  <select name="parts[]" size="10" id="parts" class="form-control" multiple>
-                    @empty (!$parts)
-                      @foreach ($parts as $parts)
-                        <option value="{{ $parts->id }}">{{ $parts->name }}</option>
-                      @endforeach
-                    @endempty
-                  </select>
-                  <div class="invalid-feedback">
-                    @error('parts')
-                    {{ $message }}
-                    @enderror
-                  </div>
-                </div>
-
-              </div>
-
-              <div class="row mt-4 d-flex justify-content-end">
-                <div class="col-2">
-                  <button type="submit" class="container-fluid p-2 btn btn-success">Salvar</button>
-                </div>
-              </div>
-
-            </form>
-          </div>
+      <div class="col">
+        <div class="form-floating">
+          <select name="client_id" id="client" class="form-control" placeholder="cliente">
+            @forelse ($clients as $client)
+              <option value="{{ $client->id }}" @selected(isset($order) && $order->client_id == $client->id)>{{ $client->name }}</option>
+            @empty
+              <option selected>Não há clientes cadastrados</option>
+            @endforelse
+          </select>
+          <label for="client">Cliente</label>
+          <div class="invalid-feedback">@error ('client_id') $message @enderror</div>
         </div>
-      </main>
-    </div>
-  </div>
-</body>
+      </div>
 
-</html>
+      <div class="col">
+        <div class="form-floating">
+          <select name="vehicle_id" id="vehicle" class="form-control" placeholder="veículo">
+            @forelse ($vehicles as $vehicle)
+              <option value="{{ $vehicle->id }}" @selected(isset($order) && $order->vehicle_id == $vehicle->id)>{{ $vehicle->modelo?->name }} - {{ $vehicle->placa }}</option>
+            @empty
+              <option selected>Não há veículos cadastrados</option>
+            @endforelse
+          </select>
+          <label for="vehicle">Veículo</label>
+          <div class="invalid-feedback">@error ('vehicle_id') $message @enderror</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-4">
+
+      <div class="mt-2 col">
+        <label for="services" class="form-label">Serviços</label>
+        <select name="services[]" size="10" id="services" class="form-control" multiple>
+          @forelse ($services as $service)
+            <option value="{{ $service->id }}" @selected( isset($order) && in_array($service->id, $order->services->pluck('service_id')->toArray() ) )>
+              {{ $service->name }}
+            </option>
+          @empty
+            <option>Nenhum serviço cadastrado</option>
+          @endforelse
+        </select>
+        <div class="invalid-feedback">
+          @error('services')
+          {{ $message }}
+          @enderror
+        </div>
+      </div>
+
+      <div class="mt-2 col-12">
+        <label for="parts" class="form-label">Peças</label>
+        <select name="parts[]" size="10" id="parts" class="form-control" multiple>
+          @forelse ($parts as $part)
+            <option value="{{ $part->id }}" @selected( isset($order) && in_array($part->id, $order->parts->pluck('parts_id')->toArray() ) )>
+              {{ $part->name }}
+            </option>
+          @empty
+            <option>Não há nenhuma opção cadastrada</option>
+          @endforelse
+        </select>
+        <div class="invalid-feedback">
+          @error('parts')
+          {{ $message }}
+          @enderror
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row mt-4 d-flex justify-content-end">
+      <div class="col-2">
+        <button type="submit" class="container-fluid p-2 btn btn-success">Salvar</button>
+      </div>
+    </div>
+
+  </form>
+</div>
+@endsection

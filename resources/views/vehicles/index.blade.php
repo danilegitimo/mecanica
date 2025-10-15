@@ -29,7 +29,6 @@
         <th>Fabricante/Modelo</th>
         <th>Proprietário</th>
         <th>Cor/Ano</th>
-        <th>Ordem de Serviço</th>
         <th>Adicionado</th>
         <th>Ações</th>
       </tr>
@@ -48,7 +47,6 @@
           <p class="m-0 p-0" style="font-size: 14px;">Cor: {{ $vehicle->cor }}</p>
           <p class="m-0 p-0" style="font-size: 14px;">Ano: {{ $vehicle->ano }}</p>
         </td>
-        <td>Não</td>
         <td>{{ $vehicle->created_at }}</td>
         <td>
           <a href="{{ route('vehicles.edit', $vehicle->id) }}" class="btn btn-success">Editar</a>

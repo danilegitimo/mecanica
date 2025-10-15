@@ -12,7 +12,7 @@ class OrderService extends Model
         'service_id'
     ];
 
-    protected function service() {
+    public function service() {
         return $this->hasOne(Service::class, 'id', 'service_id');
     }
 }

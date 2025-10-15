@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateOrUpdateOrder;
+use App\Models\Client;
 use App\Models\Order;
 use App\Models\OrderPart;
 use App\Models\OrderService;
@@ -10,46 +12,39 @@ use App\Models\Service;
 use App\Models\User;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
-class OrderController extends Controller
-{
+class OrderController extends Controller {
 
-  public function index()
-  {
-    $orders = Order::orderBy('created_at', 'desc')->paginate(10);
+  public function index(Request $request) {
+    $orders = Order::orderBy('created_at', 'desc')
+      ->with(
+        'vehicle',
+        'vehicle.modelo',
+        'services',
+        'services.service'
+      )
+      ->when($request->search, function ($query) use ($request) {
+          
+        })
+      ->paginate(10);
     return view('orders.index', compact('orders'));
   }
 
-  public function create()
-  {
-
-    $clients  = User::all();
-    $services = Service::all();
-    $vehicles = Vehicle::all();
-    $parts    = Parts::all();
-
+  public function create() {
     return view('orders.form', [
       'order'    => null, 
-      'services' => $services,
-      'vehicles' => $vehicles,
-      'parts'    => $parts,
-      'clients'  => $clients
+      'services' => Service::all(),
+      'vehicles' => Vehicle::with('modelo')->get(),
+      'parts'    => Parts::where('quantity', '>', '0')->get(),
+      'clients'  => Client::all(),
     ]);
   }
 
-  public function store(Request $request)
-  {
-    $validated = $request->validate([
-      "vehicle_id" => ["required"],
-      "client_id"  => ["required"],
-      "services" => ["required", "array"],
-      "parts" => ["nullable", "array"]
-    ]);
-
+  public function store(CreateOrUpdateOrder $request) {
+ 
     $order = Order::create([
       "vehicle_id" => $request->vehicle_id,
-      "user_id"    => $request->client_id
+      "client_id"  => $request->client_id
     ]);
 
     foreach ($request->services as $service) {
@@ -61,10 +56,16 @@ class OrderController extends Controller
 
     if ( $request->has('parts') ) {
       foreach ($request->parts as $part) {
+
+        $mPart = Parts::findOrFail($part);
+
         OrderPart::create([
           'order_id' => $order->id,
           'parts_id' => $part
         ]);
+
+        $mPart->quantity = $mPart->quantity - 1;
+        $mPart->save();
       }
     }
 
@@ -77,25 +78,62 @@ class OrderController extends Controller
     }
   }
 
-  public function edit(Order $order)
-  {
+  public function edit(Order $order) {
+    
+    $order->load(
+      'vehicle',
+      'vehicle.modelo',
+      'services',
+      'services.service',
+      'parts'
+    );
 
-    $clients  = User::all();
-    $services = Service::all();
-    $vehicles = Vehicle::all();
-    $parts    = Parts::all();
-
-    return view('orders.form', compact(
-      'order', 'services', 'vehicles', 'parts', 'clients'
-    ));
+    return view('orders.form', [
+      'order'    => $order, 
+      'services' => Service::all(),
+      'vehicles' => Vehicle::with('modelo')->get(),
+      'parts'    => Parts::where('quantity', '>', '0')->get(),
+      'clients'  => Client::all(),
+    ]);
   }
 
-  public function update(Request $request, Order $order)
-  {
+  public function update(CreateOrUpdateOrder $request, Order $order) {
 
-    $validated = $request->validate();
 
-    $order->update($validated);
+    $order->update($request->safe()->only([
+      'vehicle_id',
+      'client_id'
+    ]));
+
+    if ( $request->has('services') ) {
+      $order->services()->delete();
+
+      foreach ($request->services as $serviceId) {
+        $order->services()->create([
+          'service_id' => $serviceId
+        ]);
+      }
+
+    }
+
+    if ( $request->has('parts') ) {
+      // $order->parts()->delete();
+
+      // foreach ($request->parts as $part) {
+      //   $order->parts()->create([
+      //     'parts_id' => $part
+      //   ]);
+      // }
+
+      // $mPart = Parts::findOrFail($part);
+      // $mPart->quantity = $mPart->quantity - 1;
+      // $mPart->save();
+      $order->parts->each(function ($part) {
+        $part->part->quantity += 1;
+        $part->part->save();
+      });
+
+    }
 
     if ($order) {
       return redirect()->route('orders.index')
@@ -106,8 +144,7 @@ class OrderController extends Controller
     }
   }
 
-  public function destroy(Order $order)
-  {
+  public function destroy(Order $order) {
     $order->delete();
     return redirect()->route('orders.index')
       ->with('success', "A ordem de serviço {$order->id} foi deletada!");
