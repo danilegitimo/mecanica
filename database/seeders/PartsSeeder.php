@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Parts;
+use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -81,6 +82,8 @@ class PartsSeeder extends Seeder
                 'name' => $part['name'],
                 'quantity' => $part['quantity'],
                 'supplier_id' => $part['supplier_id'],
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
     }

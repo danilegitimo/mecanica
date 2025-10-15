@@ -1,101 +1,82 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+@extends('layouts.app')
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mecânica</title>
+@section('title', 'Veículos')
 
-  @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-  @vite(['resources/css/app.css', 'resources/js/app.js'])
-  @endif
+@section('header.title', 'Veículos')
 
-  @routes
-</head>
+@section('header.subtitle', 'Todos os veículos cadastrados e disponíveis para consulta no banco de dados.')
 
-<body>
+@section('header.content')
+<div>
+  <a href="{{ route('vehicles.create') }}" class="btn btn-success">Cadastrar</a>
+</div>
+@endsection
 
-  @include("components/system/menu/mobile")
-
-  <div class="container-fluid">
-    <div class="row">
-
-      @include("components/system/menu/desktop")
-
-      <main class="col-md-10 ms-sm-auto content p-5">
-        <div class="container-fluid">
-
-          @if ( session('error') )
-          <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>{{ session('error') }}</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-          @endif
-
-          @if ( session('success') )
-          <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>{{ session('success') }}</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-          @endif
-
-          <header class="content-header mb-4" style="display: flex; justify-content: space-between; align-items: center;">
-            <div style="width: 100%;">
-              <h1>Veículos</h1>
-              <p>Todos os veículos cadastrados e disponíveis para consulta no banco de dados.</p>
-            </div>
-            <div>
-              <a href="{{ route('vehicles.create') }}" class="btn btn-success">Cadastrar</a>
-            </div>
-          </header>
-
-          <div>
-            @if ( $vehicles->isNotEmpty() )
-            <table class="default-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Placa</th>
-                  <th>RENAVAM</th>
-                  <th>Proprietário</th>
-                  <th>Cor</th>
-                  <th>Ano</th>
-                  <th>Modelo</th>
-                  <th>Em serviço?</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach ($vehicles as $vehicle)
-                <tr>
-                  <td>{{ $vehicle->id }}</td>
-                  <td>{{ $vehicle->placa }}</td>
-                  <td>{{ $vehicle->renavam }}</td>
-                  <td>{{ $vehicle->proprietario }}</td>
-                  <td>{{ $vehicle->cor }}</td>
-                  <td>{{ $vehicle->ano }}</td>
-                  <td>{{ $vehicle->modelo->name }}</td>
-                  <td>Não</td>
-                  <td>
-                    <a href="{{ route('vehicles.edit', $vehicle->id) }}" class="btn btn-success">Editar</a>
-                    <form action="{{ route('vehicles.destroy', $vehicle->id) }}" method="POST" style="display:inline">
-                      @csrf
-                      @method('DELETE')
-                      <button type="submit" class="btn btn-danger">Excluir</button>
-                    </form>
-                  </td>
-                </tr>
-                @endforeach
-              </tbody>
-            </table>
-            @else
-             <p>Não há nenhum veículo no banco de dados. Cadastre um.</p>
-            @endif
-          </div>
-        </div>
-      </main>
-    </div>
+@section('content')
+<div>
+  @if ( $vehicles->isNotEmpty() )
+  <div class="search">
+    <form action="{{ route('vehicles.index') }}" class="d-flex">
+      <input name="search" type="search" class="form-control me-2" placeholder="Pesquisar..." value="{{ Request::has('search') ? Request::input('search') : '' }}" />
+      <button class="btn btn-success">Pesquisar</button>
+    </form>
   </div>
-</body>
-
-</html>
+  <table class="default-table">
+    <thead>
+      <tr>
+        <th>Placa</th>
+        <th>RENAVAM</th>
+        <th>Fabricante/Modelo</th>
+        <th>Proprietário</th>
+        <th>Cor/Ano</th>
+        <th>Ordem de Serviço</th>
+        <th>Adicionado</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach ($vehicles as $vehicle)
+      <tr>
+        <td>
+          <p class="m-0 p-0" style="font-size: 10px;">{{ $vehicle->id }}</p>
+          <p class="m-0 p-0 fs-5 fw-bolder">{{ $vehicle->placa }}</p>
+        </td>
+        <td>{{ $vehicle->renavam }}</td>
+        <td>{{ $vehicle?->modelo?->manufacturer }}{{ $vehicle->modelo ? '/' : '' }}{{ $vehicle?->modelo?->name }}</td>
+        <td>{{ $vehicle->proprietario }}</td>
+        <td>
+          <p class="m-0 p-0" style="font-size: 14px;">Cor: {{ $vehicle->cor }}</p>
+          <p class="m-0 p-0" style="font-size: 14px;">Ano: {{ $vehicle->ano }}</p>
+        </td>
+        <td>Não</td>
+        <td>{{ $vehicle->created_at }}</td>
+        <td>
+          <a href="{{ route('vehicles.edit', $vehicle->id) }}" class="btn btn-success">Editar</a>
+          <form action="{{ route('vehicles.destroy', $vehicle->id) }}" method="POST" style="display:inline">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-danger">Excluir</button>
+          </form>
+        </td>
+      </tr>
+      @endforeach
+    </tbody>
+  </table>
+  <div class="m-4">
+    {{ $vehicles->links() }}
+  </div>
+  @else
+    @if ( Request::has('search') )
+      <div class="empty-data p-4 d-flex flex-column justify-content-center align-items-center">
+        <p>A sua pesquisa não retornou nenhum dado para o termo: <span class="fw-bolder">{{ Request::input('search') }}</span></p>
+        <a href="{{ route('vehicles.index') }}" class="btn btn-success">Voltar</a>
+      </div>
+    @else:
+      <div class="empty-data p-4 d-flex flex-column justify-content-center align-items-center">
+        <p>Poxa! Não há nada para mostrar. Que tal cadastrar?</p>
+        <a href="{{ route('vehicles.create') }}" class="btn btn-success">Cadastrar</a>
+      </div>
+    @endif
+  @endif
+</div>
+@endsection

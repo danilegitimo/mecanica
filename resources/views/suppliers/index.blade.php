@@ -1,93 +1,73 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+@extends('layouts.app')
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mecânica</title>
+@section('title', 'Fornecedores')
 
-  @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-  @vite(['resources/css/app.css', 'resources/js/app.js'])
-  @endif
+@section('header.title', 'Fornecedores')
 
-  @routes
-</head>
+@section('header.subtitle', 'Todos os fornecedores cadastrados e disponíveis para consulta no banco de dados.')
 
-<body>
+@section('header.content')
+<div>
+  <a href="{{ route('suppliers.create') }}" class="btn btn-success">Cadastrar</a>
+</div>
+@endsection
 
-  @include("components/system/menu/mobile")
-
-  <div class="container-fluid">
-    <div class="row">
-
-      @include("components/system/menu/desktop")
-
-      <main class="col-md-10 ms-sm-auto content p-5">
-        <div class="container-fluid">
-
-          @if ( session('error') )
-          <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>{{ session('error') }}</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-          @endif
-
-          @if ( session('success') )
-          <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>{{ session('success') }}</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-          @endif
-
-          <header class="content-header mb-4" style="display: flex; justify-content: space-between; align-items: center;">
-            <div style="width: 100%;">
-              <h1>Fornecedores</h1>
-              <p>Todos os fornecedores cadastrados e disponíveis para consulta no banco de dados.</p>
-            </div>
-            <div>
-              <a href="{{ route('suppliers.create') }}" class="btn btn-success">Cadastrar</a>
-            </div>
-          </header>
-
-          <div>
-            @if ( $suppliers->isNotEmpty() )
-            <table class="default-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Nome</th>
-                  <th>CNPJ</th>
-                  <th>Contato</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach ($suppliers as $supplier)
-                <tr>
-                  <td>{{ $supplier->id }}</td>
-                  <td>{{ $supplier->name }}</td>
-                  <td>{{ $supplier->cnpj }}</td>
-                  <td>{{ $supplier->contato }}</td>
-                  <td>
-                    <a href="{{ route('suppliers.edit', $supplier->id) }}" class="btn btn-success">Editar</a>
-                    <form action="{{ route('suppliers.destroy', $supplier->id) }}" method="POST" style="display:inline">
-                      @csrf
-                      @method('DELETE')
-                      <button type="submit" class="btn btn-danger">Excluir</button>
-                    </form>
-                  </td>
-                </tr>
-                @endforeach
-              </tbody>
-            </table>
-            @else
-             <p>Não há nenhum fornecedor no banco de dados. Cadastre um.</p>
-            @endif
-          </div>
-        </div>
-      </main>
-    </div>
+@section('content')
+<div>
+  @if ( $suppliers->isNotEmpty() )
+  <div class="search">
+    <form action="{{ route('suppliers.index') }}" class="d-flex">
+      <input name="search" type="search" class="form-control me-2" placeholder="Pesquisar..." value="{{ Request::has('search') ? Request::input('search') : '' }}" />
+      <button class="btn btn-success">Pesquisar</button>
+    </form>
   </div>
-</body>
-
-</html>
+  <table class="default-table">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>CNPJ</th>
+        <th>Contato</th>
+        <th>Endereço</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach ($suppliers as $supplier)
+      <tr>
+        <td>
+          <p class="m-0 p-0" style="font-size: 10px;">{{ $supplier->id }}</p>
+          <p class="m-0 p-0 fw-bolder">{{ $supplier->name }}</p>
+        </td>
+        <td>{{ $supplier->cnpj }}</td>
+        <td>{{ $supplier->contato }}</td>
+        <td>{{ $supplier->endereco }}</td>
+        <td>
+          <a href="{{ route('suppliers.edit', $supplier->id) }}" class="btn btn-success">Editar</a>
+          <form action="{{ route('suppliers.destroy', $supplier->id) }}" method="POST" style="display:inline">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-danger">Excluir</button>
+          </form>
+        </td>
+      </tr>
+      @endforeach
+    </tbody>
+  </table>
+  <div class="m-4">
+    {{ $suppliers->links() }}
+  </div>
+  @else
+    @if ( Request::has('search') )
+    <div class="empty-data p-4 d-flex flex-column justify-content-center align-items-center">
+      <p>A sua pesquisa não retornou nenhum dado para o termo: <span class="fw-bolder">{{ Request::input('search') }}</span></p>
+      <a href="{{ route('suppliers.index') }}" class="btn btn-success">Voltar</a>
+    </div>
+    @else:
+    <div class="empty-data p-4 d-flex flex-column justify-content-center align-items-center">
+      <p>Poxa! Não há nada para mostrar. Que tal cadastrar?</p>
+      <a href="{{ route('suppliers.create') }}" class="btn btn-success">Cadastrar</a>
+    </div>
+    @endif
+  @endif
+</div>
+@endsection

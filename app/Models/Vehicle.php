@@ -14,11 +14,15 @@ class Vehicle extends Model
         'proprietario',
         'cor',
         'ano',
-        'user_id'
+        'client_id'
     ];
 
     public function modelo() {
-        return $this->hasOne(VehicleModel::class, 'id', 'vehicle_model_id');
+        return $this->belongsTo(VehicleModel::class, 'vehicle_model_id');
+    }
+
+    public function cliente() {
+        return $this->belongsTo(Client::class, 'client_id');
     }
 
 }

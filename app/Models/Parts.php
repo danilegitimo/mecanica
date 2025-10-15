@@ -12,5 +12,9 @@ class Parts extends Model
         'quantity',
         'supplier_id'
     ];
+
+    public function fornecedor() {
+        return $this->belongsTo(Supplier::class, 'supplier_id');
+    }
     
 }

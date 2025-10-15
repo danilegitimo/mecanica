@@ -19,12 +19,12 @@ class DatabaseSeeder extends Seeder {
       $this->call(VehiclesModelsSeeder::class);
     }
 
-    if ( DB::table('users')->count() <= 1 ) {
-      $this->call(UsersOrClients::class);
-    }
-
     if ( DB::table('services')->count() <= 0 ) {
       $this->call(ServicesSeeder::class);
+    }
+
+    if ( DB::table('clients')->count() <= 0 ) {
+      $this->call(ClientSeeder::class);
     }
 
     if ( DB::table('suppliers')->count() <= 0 ) {

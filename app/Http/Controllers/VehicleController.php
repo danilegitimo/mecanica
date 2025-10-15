@@ -3,79 +3,59 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateOrUpdateVehicle;
+use App\Models\Client;
 use App\Models\Vehicle;
 use App\Models\VehicleModel;
 use Illuminate\Http\Request;
 
-class VehicleController extends Controller
-{
+class VehicleController extends Controller {
 
-  public function index()
-  {
-    $vehicles = Vehicle::orderBy('id', 'desc')->paginate(10);
+  public function index(Request $request) {
+    $vehicles = Vehicle::orderBy('id', 'desc')
+      ->with('modelo')
+      ->when($request->search, function ($query) use ($request) {
+        $query->where('placa', 'LIKE', "%{$request->search}%");
+        $query->orWhere('proprietario', 'LIKE', "%{$request->search}%");
+      })
+      ->paginate(10);
     return view('vehicles.index', compact('vehicles'));
   }
 
-  public function create()
-  {
-    $models = VehicleModel::all();
-    return view('vehicles.form', ['vehicle' => null, 'models' => $models]);
+  public function create() {
+    return view('vehicles.form', [
+      'vehicle' => null,
+      'models'  => VehicleModel::all(),
+      'clients' => Client::all()
+    ]);
   }
 
-  public function store(CreateOrUpdateVehicle $request)
-  {
-    $validated = $request->validate([
-      "placa"      => "required|min:3|max:255|unique:vehicles,placa",
-      "renavam"     => "required|min:3|max:255|unique:vehicles,renavam",
-      "vehicle_model_id" => "required|exists:vehicle_models,id",
-      "proprietario" => "required|min:4",
-      "cor"       => "required|min:3",
-      "ano"        => "required|string|min:4|max:4",
-    ]);
-    $vehicle = Vehicle::create($validated);
-
-    if ($vehicle) {
+  public function store(CreateOrUpdateVehicle $request) {
+    if ( $vehicle = Vehicle::create($request->validated()) ) {
       return redirect()->route('vehicles.index')
-        ->with('success', 'O novo veículo foi criado!');
+        ->with('success', "O veículo {$vehicle->placa} foi criado!");
     } else {
       return redirect()->route('vehicles.index')
-        ->with('error', 'O novo veículo não foi criado!');
+        ->with('error', "Não foi possível criar {$vehicle->placa}!");
     }
   }
 
-  public function edit(string $id)
-  {
-    $models = VehicleModel::all();
-    $vehicle = Vehicle::findOrFail($id);
-    return view('vehicles.form', compact('vehicle', 'models'));
+  public function edit(Vehicle $vehicle) {
+    $vehicle->load('modelo', 'cliente');
+    $models = VehicleModel::all(); $clients = Client::all();
+    return view('vehicles.form', compact('vehicle', 'models', 'clients'));
   }
 
-  public function update(Request $request, Vehicle $vehicle)
-  {
-
-    $validated = $request->validate([
-      "placa"      => "required|min:3|max:255|unique:vehicles,placa,".$vehicle->id,
-      "renavam"     => "required|min:3|max:255|unique:vehicles,renavam,".$vehicle->id,
-      "proprietario" => "required|min:4",
-      "cor"        => "required|min:3",
-      "ano"        => "required|string|min:4|max:4",
-      "vehicle_model_id" => "required|exists:vehicle_models,id"
-    ]);
-
-    $vehicle->update($validated);
-
-    if ($vehicle) {
+  public function update(CreateOrUpdateVehicle $request, Vehicle $vehicle) {
+    if ($vehicle->update($request->validated())) {
       return redirect()->route('vehicles.index')
-        ->with('success', "O veículo{$vehicle->placa} foi atualizado!");
+        ->with('success', "O veículo {$vehicle->placa} foi atualizado!");
     } else {
       return redirect()->route('vehicles.index')
         ->with('error', "Não foi possível atualizar o veículo!");
     }
   }
 
-  public function destroy(string $id)
-  {
-    $vehicle = Vehicle::findOrFail($id);
+  public function destroy(Vehicle $vehicle) {
     $vehicle->delete();
     return redirect()->route('vehicles.index')
       ->with('success', "O veículo {$vehicle->placa} foi deletado!");

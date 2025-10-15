@@ -49,6 +49,8 @@ class UsersOrClients extends Seeder
                 'email' => $user['email'],
                 'password' => bcrypt('password'),
                 'contact' => "($ddd) $number",
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
     }

@@ -2,36 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateOrUpdateSupplier;
 use App\Models\Supplier;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class SupplierController extends Controller
 {
 
-  public function index()
-  {
-    $suppliers = Supplier::orderBy('created_at', 'desc')->paginate(10);
+  public function index(Request $request) {
+    $suppliers = Supplier::orderBy('created_at', 'desc')
+      ->when($request->search, function ($query) use ($request) {
+        $query->where('name', 'LIKE', "%{$request->search}%");
+        $query->orWhere('cnpj', 'LIKE', "%{$request->search}%");
+        $query->orWhere('contato', 'LIKE', "%{$request->search}%");
+        $query->orWhere('endereco', 'LIKE', "%{$request->search}%");
+      })
+      ->paginate(10);
     return view('suppliers.index', compact('suppliers'));
   }
 
-  public function create()
-  {
+  public function create() {
     return view('suppliers.form', ['supplier' => null]);
   }
 
-  public function store(Request $request)
-  {
-    $validated = $request->validate([
-      "name"      => "required|min:3|max:255",
-      "cnpj"     => "required|min:3|max:255|unique:suppliers,cnpj",
-      "contato" => "required|min:4",
-    ]);
-
-    $supplier = Supplier::create($validated);
-
-    if ($supplier) {
+  public function store(CreateOrUpdateSupplier $request) {
+    if ( $supplier = Supplier::create($request->validated()) ) {
       return redirect()->route('suppliers.index')
         ->with('success', 'O novo fornecedor foi criado!');
     } else {
@@ -40,24 +35,12 @@ class SupplierController extends Controller
     }
   }
 
-  public function edit(string $id)
-  {
-    $supplier = Supplier::findOrFail($id);
+  public function edit(Supplier $supplier) {
     return view('suppliers.form', compact('supplier'));
   }
 
-  public function update(Request $request, Supplier $supplier)
-  {
-
-   $validated = $request->validate([
-      "name"      => "required|min:3|max:255",
-      "cnpj"     => "required|min:3|max:255|unique:suppliers,cnpj",
-      "contato" => "required|min:4",
-    ]);
-
-    $supplier->update($validated);
-
-    if ($supplier) {
+  public function update(CreateOrUpdateSupplier $request, Supplier $supplier) {
+    if ($supplier->update($request->validated())) {
       return redirect()->route('suppliers.index')
         ->with('success', "O fornecedor {$supplier->name} foi atualizado!");
     } else {
@@ -66,8 +49,7 @@ class SupplierController extends Controller
     }
   }
 
-  public function destroy(Supplier $supplier)
-  {
+  public function destroy(Supplier $supplier) {
     $supplier->delete();
     return redirect()->route('suppliers.index')
       ->with('success', "O fornecedor {$supplier->name} foi deletado!");

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Supplier;
+use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -75,11 +76,29 @@ class SuppliersSeeder extends Seeder
             ['name' => 'Mecânica e Acessórios do Nordeste', 'cnpj' => '90.123.456/0001-78', 'contato' => '(91) 99012-3456'],
         ];
 
+        $enderecos = [
+  'Rua Haddock Lobo, 595 - Cerqueira César, São Paulo/SP - 01414-001',
+  'Avenida Atlântica, 1702 - Copacabana, Rio de Janeiro/RJ - 22021-001',
+  'Rua das Flores, 80 - Centro, Curitiba/PR - 80020-010',
+  'Avenida Afonso Pena, 1500 - Centro, Belo Horizonte/MG - 30130-003',
+  'Rua dos Andradas, 1234 - Centro Histórico, Porto Alegre/RS - 90020-008',
+  'Avenida Beira-Mar, 2500 - Meireles, Fortaleza/CE - 60165-121',
+  'Rua Frei Serafim, 980 - Centro, Teresina/PI - 64000-020',
+  'Avenida Getúlio Vargas, 455 - Funcionários, Goiânia/GO - 74101-020',
+  'Rua João Pessoa, 300 - Centro, Recife/PE - 50020-010',
+  'Avenida Litorânea, 2100 - Calhau, São Luís/MA - 65071-377'
+];
+
+$total = count($enderecos) - 1;
+
         foreach ($suppliers as $supplier) {
             Supplier::create([
                 'name' => $supplier['name'],
                 'cnpj' => $supplier['cnpj'],
+                'endereco' => $enderecos[rand(0, $total)],
                 'contato' => $supplier['contato'],
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
     }

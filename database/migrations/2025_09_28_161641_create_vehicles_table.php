@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use App\Models\Client;
 use App\Models\VehicleModel;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -13,10 +13,13 @@ return new class extends Migration
      */
     public function up(): void
     {
+
+        Schema::disableForeignKeyConstraints();
+        
         Schema::create('vehicles', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(VehicleModel::class)->constrained();
-            $table->foreignIdFor(User::class)->nullable()->constrained();
+            $table->foreignIdFor(Client::class)->nullable()->constrained();
             $table->string('placa');
             $table->string('renavam');
             $table->string('proprietario')->nullable();

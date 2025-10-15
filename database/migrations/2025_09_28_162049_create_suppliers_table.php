@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('cnpj');
+            $table->string('endereco');
             $table->string('contato');
             $table->timestamps();
         });
