@@ -53,6 +53,10 @@
                 <h1>{{ $parts }}</h1>
                 <p>Peças</p>
               </div>
+              <div class="bg-dark text-white col-sm-3 col-md-3 p-4">
+                <h1>R$ {{ number_format($total, 2, ',', '.') }}</h1>
+                <p>Total de ganho</p>
+              </div>
             </div>
           </div>
         </main>

@@ -9,7 +9,6 @@ use App\Models\OrderPart;
 use App\Models\OrderService;
 use App\Models\Parts;
 use App\Models\Service;
-use App\Models\User;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
 
@@ -105,8 +104,10 @@ class OrderController extends Controller {
       'client_id'
     ]));
 
+    
     if ( $request->has('services') ) {
-      $order->services()->delete();
+
+      $order->services()->forceDelete();
 
       foreach ($request->services as $serviceId) {
         $order->services()->create([
@@ -117,21 +118,24 @@ class OrderController extends Controller {
     }
 
     if ( $request->has('parts') ) {
-      // $order->parts()->delete();
 
-      // foreach ($request->parts as $part) {
-      //   $order->parts()->create([
-      //     'parts_id' => $part
-      //   ]);
-      // }
-
-      // $mPart = Parts::findOrFail($part);
-      // $mPart->quantity = $mPart->quantity - 1;
-      // $mPart->save();
       $order->parts->each(function ($part) {
         $part->part->quantity += 1;
         $part->part->save();
       });
+
+      $order->parts()->forceDelete();
+
+      foreach ($request->parts as $partId) {
+        $order->parts()->create([
+          'parts_id' => $partId
+        ]);
+
+        $p = Parts::findOrFail($partId);
+        $p->quantity = $p->quantity - 1;
+        $p->save();
+        
+      }
 
     }
 

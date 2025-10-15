@@ -23,8 +23,14 @@ Route::middleware('auth')->group(function () {
     $clients  = Client::all()->count();
     $parts    = Parts::all()->count();
 
+    $total = 0;
+
+    $orders->each(function ($order) use ($total) {
+      $total += $order->services()->join('services', 'order_services.service_id', '=', 'services.id')->sum('services.amount');
+    });
+
     return view("index", compact(
-      'parts', 'vehicles', 'orders', 'clients'
+      'parts', 'vehicles', 'orders', 'clients', 'total'
     ));
 
   })->name("dashboard");

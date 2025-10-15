@@ -12,32 +12,30 @@ use Illuminate\Support\Facades\Schema;
 
 class VehiclesSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
-    {
-        
-        Schema::disableForeignKeyConstraints();
+  /**
+   * Run the database seeds.
+   */
+  public function run(): void {
 
-        $faker = Faker::create('pt_BR');
+    Schema::disableForeignKeyConstraints();
 
-        $cores = ["Vermelho", "Azul", "Verde", "Amarelo", "Roxo", "Laranja", "Rosa", "Preto", "Branco", "Cinza", "Marrom", "Bege", "Vinho", "Dourado", "Prata", "Turquesa", "Ciano", "Magenta", "Lilás", "Ameixa", "Oliva", "Creme", "Caramelo", "Azul", "Verde", "Verde", "Roxo", "Branco", "Cinza", "Preto"];
+    $faker = Faker::create('pt_BR');
 
-        
-        for ($i = 1; $i <= 1000; $i++) { 
-            DB::table('vehicles')->insert([
-                'vehicle_model_id' => rand(1, DB::table('vehicles')->count()), // ID do modelo de veículo aleatório
-                'placa' => strtoupper($faker->bothify('???-#?##')), // Placa no formato ABC-1234
-                'renavam' => $faker->numerify('###########'), // RENAVAM com 11 dígitos
-                'proprietario' => $faker->name, // Nome do proprietário
-                'cor' => $cores[array_rand($cores)], // Cor do veículo
-                'ano' => rand(2000, 2025), // Ano aleatório entre 2000 e 2025
-                'client_id' => rand(1, DB::table('clients')->count()), // ID do usuário aleatório,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ]);
-        }
+    $cores = ["Vermelho", "Azul", "Verde", "Amarelo", "Roxo", "Laranja", "Rosa", "Preto", "Branco", "Cinza", "Marrom", "Bege", "Vinho", "Dourado", "Prata", "Turquesa", "Ciano", "Magenta", "Lilás", "Ameixa", "Oliva", "Creme", "Caramelo", "Azul", "Verde", "Verde", "Roxo", "Branco", "Cinza", "Preto"];
 
+    for ($i=1; $i <= 100; $i++) {
+      Vehicle::create([
+        'vehicle_model_id' => rand(1, DB::table('vehicles')->count()),
+        'placa' => strtoupper($faker->bothify('???-#?##')),
+        'renavam' => $faker->numerify('###########'),
+        'proprietario' => mb_strtoupper($faker->name),
+        'cor' => $cores[array_rand($cores)],
+        'ano' => rand(1990, 2026),
+        'client_id' => floor(rand(1, DB::table('clients')->count())),
+        'created_at' => Carbon::now(),
+        'updated_at' => Carbon::now(),
+      ]);
     }
+    
+  }
 }

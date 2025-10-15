@@ -9,9 +9,13 @@ use Illuminate\Support\Facades\Hash;
 class ServiceController extends Controller
 {
 
-  public function index()
+  public function index(Request $request)
   {
-    $services = Service::orderBy('created_at', 'desc')->paginate(10);
+    $services = Service::orderBy('created_at', 'desc')
+    ->when($request->search, function ($query) use ($request) {
+        $query->where('name', 'LIKE', "%{$request->search}%");
+      })
+      ->paginate(10);
     return view('services.index', compact('services'));
   }
 
@@ -24,7 +28,7 @@ class ServiceController extends Controller
   {
     $validated = $request->validate([
       "name"      => "required|min:3|max:255",
-      "amount"     => "required|integer|min:0"
+      "amount"     => "required|numeric|min:0"
     ]);
 
     $service = Service::create($validated);
@@ -49,7 +53,7 @@ class ServiceController extends Controller
 
     $validated = $request->validate([
       "name"      => "required|min:3|max:255",
-      "amount"     => "required|integer|min:0"
+      "amount"     => "required|numeric|min:0"
     ]);
 
     $service->update($validated);

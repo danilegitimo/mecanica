@@ -69,7 +69,7 @@
         <p>A sua pesquisa não retornou nenhum dado para o termo: <span class="fw-bolder">{{ Request::input('search') }}</span></p>
         <a href="{{ route('vehicles.index') }}" class="btn btn-success">Voltar</a>
       </div>
-    @else:
+    @else
       <div class="empty-data p-4 d-flex flex-column justify-content-center align-items-center">
         <p>Poxa! Não há nada para mostrar. Que tal cadastrar?</p>
         <a href="{{ route('vehicles.create') }}" class="btn btn-success">Cadastrar</a>

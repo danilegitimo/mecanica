@@ -2,10 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Service;
 use Database\Seeders\Services as ServicesSeeder;
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -15,14 +12,18 @@ class DatabaseSeeder extends Seeder {
    * Seed the application's database.
    */
   public function run(): void {
+
+    // Se, e somente se, não haver nada na tabela.
     if ( DB::table('vehicle_models')->count() <= 0 ) {
       $this->call(VehiclesModelsSeeder::class);
     }
 
+    // Se, e somente se, não haver nada na tabela
     if ( DB::table('services')->count() <= 0 ) {
       $this->call(ServicesSeeder::class);
     }
 
+    // Se, e somente se, não haver nada na tabela
     if ( DB::table('clients')->count() <= 0 ) {
       $this->call(ClientSeeder::class);
     }
